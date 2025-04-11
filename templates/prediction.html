@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Churn Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --success: #00b09b;
+            --danger: #ff416c;
+            --warning: #ff7e5f;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            animation: gradientWave 15s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientWave {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bubbles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: floatingBubbles 15s infinite ease-in;
+        }
+
+        .bubble:nth-child(1) {
+            width: 40px;
+            height: 40px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bubble:nth-child(2) {
+            width: 20px;
+            height: 20px;
+            left: 20%;
+            animation-delay: 2s;
+            animation-duration: 12s;
+        }
+
+        .bubble:nth-child(3) {
+            width: 50px;
+            height: 50px;
+            left: 35%;
+            animation-delay: 4s;
+        }
+
+        .bubble:nth-child(4) {
+            width: 80px;
+            height: 80px;
+            left: 50%;
+            animation-delay: 0s;
+            animation-duration: 18s;
+        }
+
+        .bubble:nth-child(5) {
+            width: 35px;
+            height: 35px;
+            left: 55%;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(6) {
+            width: 45px;
+            height: 45px;
+            left: 65%;
+            animation-delay: 3s;
+            animation-duration: 14s;
+        }
+
+        .bubble:nth-child(7) {
+            width: 25px;
+            height: 25px;
+            left: 75%;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(8) {
+            width: 80px;
+            height: 80px;
+            left: 80%;
+            animation-delay: 2s;
+            animation-duration: 20s;
+        }
+
+        .bubble:nth-child(9) {
+            width: 15px;
+            height: 15px;
+            left: 70%;
+            animation-delay: 1s;
+            animation-duration: 10s;
+        }
+
+        .bubble:nth-child(10) {
+            width: 50px;
+            height: 50px;
+            left: 85%;
+            animation-delay: 4s;
+            animation-duration: 16s;
+        }
+
+        @keyframes floatingBubbles {
+            0% { bottom: -100px; transform: translateX(0); }
+            50% { transform: translateX(100px); }
+            100% { bottom: 1080px; transform: translateX(-200px); }
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0) 60%
+            );
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--dark);
+            margin-bottom: 30px;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1 1 calc(50% - 15px);
+            min-width: 200px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2);
+            background-color: var(--white);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        input[type="submit"], button[type="submit"] {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            max-width: 300px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        input[type="submit"]:hover, button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+        }
+
+        input[type="submit"]:active, button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        input[type="submit"]::after, button[type="submit"]::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+            transition: all 0.3s ease;
+        }
+
+        input[type="submit"]:hover::after, button[type="submit"]:hover::after {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+            color: var(--dark);
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+            border-left: 5px solid var(--primary);
+        }
+
+        .result h3 {
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+            color: var(--dark);
+            border-radius: 15px;
+            text-align: left;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+            border-left: 5px solid var(--secondary);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .explanation h4 {
+            margin-bottom: 10px;
+            color: var(--dark);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .bar-container {
+            margin-top: 25px;
+            background-color: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 40px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .bar {
+            height: 100%;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, var(--danger) 0%, var(--warning) 100%);
+            line-height: 40px;
+            font-weight: bold;
+            transition: width 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 50%,
+                rgba(255, 255, 255, 0.3) 100%
+            );
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(106, 17, 203, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(106, 17, 203, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(106, 17, 203, 0); }
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                max-width: 95%;
+            }
+            
+            h2 {
+                font-size: 22px;
+            }
+            
+            .form-group {
+                flex: 1 1 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            input, select {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <div class="container animate_animated animate_fadeIn">
+        <h2>E-commerce Churn Prediction</h2>
+        <form method="POST" action="/predict">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gender:</label>
+                    <select name="gender">
+                        <option value="Male" {% if form_data and form_data['Gender'] == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if form_data and form_data['Gender'] == 'Female' %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Age:</label>
+                    <input type="number" name="age" value="{{ form_data['Age'] if form_data }}" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Recency (days):</label>
+                    <input type="number" name="recency" value="{{ form_data['Recency'] if form_data }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Frequency:</label>
+                    <input type="number" name="frequency" value="{{ form_data['Frequency'] if form_data }}" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Total Amount Spent:</label>
+                    <input type="number" step="0.01" name="total_amount" value="{{ form_data['Total_Amount'] if form_data }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Unique Categories Purchased:</label>
+                    <input type="number" name="unique_categories" value="{{ form_data['Unique_Categories'] if form_data }}" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Average Purchase Value:</label>
+                    <input type="number" step="0.01" name="avg_purchase_value" value="{{ form_data['Avg_Purchase_Value'] if form_data }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Return Rate:</label>
+                    <input type="number" step="0.01" name="return_rate" value="{{ form_data['Return_Rate'] if form_data }}" required>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <input type="submit" value="Predict" class="animate_animated animatepulse animateinfinite animate_slower">
+            </div>
+        </form>
+
+        {% if prediction_text %}
+        <div class="result animate_animated animate_fadeInUp">
+            <h3>{{ prediction_text }}</h3>
+            {% if output %}
+            <div class="bar-container">
+                <div class="bar" style="width: {{ output }}%;">{{ output }}%</div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if explanation %}
+        <div class="explanation animate_animated animate_fadeInUp">
+            <h4>Key Contributing Factors</h4>
+            {{ explanation }}
+        </div>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 10px;">
+            <form method="GET" action="/">
+                <button type="submit">Reset</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const formGroups = document.querySelectorAll('.form-group');
+            
+            formGroups.forEach((group, index) => {
+                group.style.opacity = '0';
+                group.style.transform = 'translateY(20px)';
+                group.style.transition = all 0.5s ease ${index * 0.1}s;
+                
+                setTimeout(() => {
+                    group.style.opacity = '1';
+                    group.style.transform = 'translateY(0)';
+                }, 100);
+            });
+
+            const colorSets = [
+                ['#ee7752', '#e73c7e', '#23a6d5', '#23d5ab'],
+                ['#ff758c', '#ff7eb3', '#9370db', '#00d2ff'],
+                ['#3a1c71', '#d76d77', '#ffaf7b', '#f6d365'],
+                ['#4776E6', '#8E54E9', '#4776E6', '#8E54E9'],
+                ['#0f0c29', '#302b63', '#24243e', '#302b63'],
+                ['#11998e', '#38ef7d', '#11998e', '#38ef7d']
+            ];
+            
+            let currentColorSet = 0;
+            
+            function changeBackgroundColors() {
+                const newColors = colorSets[currentColorSet];
+                document.body.style.background = linear-gradient(-45deg, ${newColors.join(', ')});
+                document.body.style.backgroundSize = '400% 400%';
+                
+                currentColorSet = (currentColorSet + 1) % colorSets.length;
+                
+                setTimeout(changeBackgroundColors, 15000);
+            }
+            
+            setTimeout(changeBackgroundColors, 15000);
+
+            const container = document.querySelector('.container');
+            let floatDirection = 1;
+            
+            function floatContainer() {
+                const currentTransform = window.getComputedStyle(container).getPropertyValue('transform');
+                const currentY = currentTransform === 'none' ? 0 : parseFloat(currentTransform.split(',')[5]) || 0;
+                
+                if (Math.abs(currentY) >= 5) {
+                    floatDirection *= -1;
+                }
+                
+                container.style.transform = translateY(${currentY + floatDirection * 0.5}px);
+                requestAnimationFrame(floatContainer);
+            }
+            
+            setTimeout(() => {
+                requestAnimationFrame(floatContainer);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
